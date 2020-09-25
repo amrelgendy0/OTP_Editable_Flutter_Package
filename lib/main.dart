@@ -2,36 +2,59 @@ import 'package:flutter/material.dart';
 import 'package:otp/OTPTextField.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(Ma());
 }
 
-class MyApp extends StatefulWidget {
+class Ma extends StatelessWidget {
   @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  @override
-  String Otp='';
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: Column(
-          children: [
-            SizedBox(height: 100,),
-            OTPTextField(
-              length: 5,style: TextStyle(color: Colors.black,fontSize: 24,fontWeight: FontWeight.bold),
-              width: 460,
-              onCompleted: (s) {
-                setState(() {
-                  Otp=s;
+      home: OTP(),
+    );
+  }
+}
 
-                });
+class OTP extends StatefulWidget {
+  @override
+  _OTPState createState() => _OTPState();
+}
+
+class _OTPState extends State<OTP> {
+  String Otp = '';
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          SizedBox(
+            height: 100,
+          ),
+          OTPTextField(
+            length: 5,
+            style: TextStyle(
+                color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
+            width: 460,
+            onCompleted: (s) {
+              setState(() {
+                Otp = s;
+              });
+            },
+            keyboardType: TextInputType.number,
+          ),
+          SizedBox(
+            height: 40,
+          ),
+          if (Otp.trim() != '')
+            FlatButton(
+              onPressed: () {
+                print(Otp);
               },
-              keyboardType: TextInputType.number,
-            ),SizedBox(height: 40,),Text(Otp,style: TextStyle(fontSize: 20),)
-          ],
-        ),
+              child: Text(
+                "Next",
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
+        ],
       ),
     );
   }

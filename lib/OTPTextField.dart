@@ -48,6 +48,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
   void dispose() {
     _textControllers
         .forEach((TextEditingController controller) => controller.dispose());
+    _focusNodes.forEach((element) {element.dispose(); });
     super.dispose();
   }
 
@@ -81,11 +82,14 @@ class _OTPTextFieldState extends State<OTPTextField> {
     return Container(
       width: widget.fieldWidth,
       child: TextField(
-        controller: _textControllers[i],
+        controller: _textControllers[i]..addListener(() {
+          _textControllers[i].selection = TextSelection.fromPosition(
+              TextPosition(offset: _textControllers[i].text.length));
+        }),
         keyboardType: widget.keyboardType,
         textAlign: TextAlign.center,
         dragStartBehavior: DragStartBehavior.down,
-        showCursor: false,
+        showCursor: true,
         style: widget.style,
         focusNode: _focusNodes[i],
         obscureText: widget.obscureText,
@@ -97,17 +101,12 @@ class _OTPTextFieldState extends State<OTPTextField> {
             borderSide: BorderSide(color: Colors.red),
           ),
         ),
-        onTap: () {
-          _textControllers[i].selection = TextSelection.fromPosition(
-              TextPosition(offset: _textControllers[i].text.length));
-        },
         onChanged: (String str) {
           if (str.isEmpty) {
             if (i == 0) return;
             _focusNodes[i].unfocus();
             _focusNodes[i - 1].requestFocus();
           }
-
           if (str.isNotEmpty) {
             if (_isFirst) {
               _focusNodes[i].unfocus();
@@ -117,7 +116,6 @@ class _OTPTextFieldState extends State<OTPTextField> {
               _focusNodes[i].unfocus();
             }
           }
-
           if (i + 1 != widget.length && str.isNotEmpty) {
             FocusScope.of(context).requestFocus(_focusNodes[i + 1]);
           }
