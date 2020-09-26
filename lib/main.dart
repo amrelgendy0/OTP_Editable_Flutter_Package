@@ -30,13 +30,15 @@ class _OTPState extends State<OTP> {
             height: 100,
           ),
           OTPTextField(
-            length: 5,
+            textFieldAlignment: MainAxisAlignment.spaceAround,
+            fieldWidth: 40,
+            length: 6,
             style: TextStyle(
                 color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
             width: 460,
-       onCompleted: (String){
+            onCompleted: (String) {
               print(String);
-       },
+            },
             keyboardType: TextInputType.number,
           ),
           SizedBox(

@@ -40,7 +40,6 @@ class _OTPTextFieldState extends State<OTPTextField> {
     super.initState();
     _focusNodes = List<FocusNode>(widget.length);
     _textControllers = List<TextEditingController>(widget.length);
-
     _textFields = List.generate(widget.length, (int i) {
       return buildTextField(context, i);
     });
@@ -88,79 +87,91 @@ class _OTPTextFieldState extends State<OTPTextField> {
     });
     return oo;
   }
-
   bool n4ta8al = false;
   Widget buildTextField(BuildContext context, int i) {
     bool _isFirst = true;
     if (_focusNodes[i] == null) _focusNodes[i] = new FocusNode();
-    _focusNodes[i].addListener(() {
-      Fun(i);
-    });
     if (_textControllers[i] == null)
       _textControllers[i] = new TextEditingController();
-    return Container(
-      width: widget.fieldWidth,
-      child: TextField(
-        controller: _textControllers[i]
-          ..addListener(() {
-            _textControllers[i].selection = TextSelection.fromPosition(
-                TextPosition(offset: _textControllers[i].text.length));
-            try {
-              _textControllers[i].text = _textControllers[i].text[1];
-            } catch (e) {}
-            if (_textControllers[i].text == '') {
-              _textControllers[i].text = '\t';
-            }
-          }),
-        keyboardType: widget.keyboardType,
-        textAlign: TextAlign.center,
-        dragStartBehavior: DragStartBehavior.down,
-        showCursor: true,
-        maxLines: 1,
-        style: widget.style,
-        focusNode: _focusNodes[i],
-        obscureText: widget.obscureText,
-        decoration: InputDecoration(
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.green),
+    String char = " ";
+    return StatefulBuilder(
+      builder:
+          (BuildContext context, void Function(void Function()) setSsstate) {
+        _focusNodes[i].addListener(() {
+          Fun(i);
+          if (widget.obscureText) {
+            setSsstate(() {
+              if (includenum(_textControllers[i].text)) {
+                char = '•';
+              } else
+                char = " ";
+            });
+          }
+        });
+        return Container(
+          width: widget.fieldWidth,
+          child: TextField(
+            controller: _textControllers[i]
+              ..addListener(() {
+                _textControllers[i].selection = TextSelection.fromPosition(
+                    TextPosition(offset: _textControllers[i].text.length));
+                try {
+                  _textControllers[i].text = _textControllers[i].text[1];
+                } catch (e) {}
+                if (_textControllers[i].text == '') {
+                  _textControllers[i].text = '\t';
+                }
+              }),
+            keyboardType: widget.keyboardType,
+            textAlign: TextAlign.center,
+            dragStartBehavior: DragStartBehavior.down,
+            showCursor: true,
+            maxLines: 1,
+            obscuringCharacter: char,
+            style: widget.style,
+            focusNode: _focusNodes[i],
+            obscureText: widget.obscureText,
+            decoration: InputDecoration(
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.green),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.red),
+              ),
+            ),
+            onChanged: (String str) {
+              if (!includenum(str)) {
+                if (n4ta8al) {
+                  _textControllers[i - 1].text = '\t';
+                }
+
+                _focusNodes[i].unfocus();
+                _focusNodes[i - 1].requestFocus();
+              }
+
+              if (includenum(str)) {
+                if (_isFirst) {
+                  _focusNodes[i].unfocus();
+                  _isFirst = false;
+                } else {
+                  _focusNodes[i].unfocus();
+                }
+              }
+              if (i + 1 != widget.length && str.isNotEmpty) {
+                FocusScope.of(context).requestFocus(_focusNodes[i + 1]);
+              }
+              String currentPin = '';
+              _textControllers.forEach((TextEditingController value) {
+                currentPin += value.text;
+              });
+              if (includenum(_textControllers.last.text) && check) {
+                widget.onCompleted(currentPin);
+              }
+              // widget.onChanged(currentPin);
+            },
           ),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.red),
-          ),
-        ),
-        onChanged: (String str) {
-          if (!includenum(str)) {
-            if (n4ta8al) {
-              _textControllers[i - 1].text = '\t';
-            }
-
-            _focusNodes[i].unfocus();
-            _focusNodes[i - 1].requestFocus();
-          }
-
-          if (includenum(str)) {
-            if (_isFirst) {
-              _focusNodes[i].unfocus();
-              _isFirst = false;
-            } else {
-              _focusNodes[i].unfocus();
-            }
-          }
-          if (i + 1 != widget.length && str.isNotEmpty) {
-            FocusScope.of(context).requestFocus(_focusNodes[i + 1]);
-          }
-
-          String currentPin = '';
-
-          _textControllers.forEach((TextEditingController value) {
-            currentPin += value.text;
-          });
-          if (includenum(_textControllers.last.text) && check) {
-            widget.onCompleted(currentPin);
-          }
-          // widget.onChanged(currentPin);
-        },
-      ),
+        );
+      },
     );
   }
 
