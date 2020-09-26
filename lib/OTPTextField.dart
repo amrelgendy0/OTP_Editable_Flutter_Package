@@ -6,7 +6,7 @@ class OTPTextField extends StatefulWidget {
   final int length;
   final double width;
   final double fieldWidth;
-  TextInputType keyboardType;
+  final TextInputType keyboardType;
   final TextStyle style;
   final MainAxisAlignment textFieldAlignment;
   final bool obscureText;
@@ -33,27 +33,16 @@ class _OTPTextFieldState extends State<OTPTextField> {
   List<FocusNode> _focusNodes;
   List<TextEditingController> _textControllers;
   List<Widget> _textFields;
-  bool _naFirst;
   @override
   void initState() {
-    _naFirst = true;
-    super.initState();
     _focusNodes = List<FocusNode>(widget.length);
-    _textControllers = List<TextEditingController>(widget.length);
+    // _textControllers = List<TextEditingController>(widget.length);
+    _textControllers = List<TextEditingController>.generate(
+        widget.length, (index) => TextEditingController(text: '\t'));
     _textFields = List.generate(widget.length, (int i) {
       return buildTextField(context, i);
     });
-  }
-
-  @override
-  void didChangeDependencies() {
-    if (_naFirst) {
-      _textControllers.forEach((element) {
-        element.text = '\t';
-      });
-      _naFirst = false;
-    }
-    super.didChangeDependencies();
+    super.initState();
   }
 
   @override
@@ -145,11 +134,9 @@ class _OTPTextFieldState extends State<OTPTextField> {
                 if (n4ta8al) {
                   _textControllers[i - 1].text = '\t';
                 }
-
                 _focusNodes[i].unfocus();
                 _focusNodes[i - 1].requestFocus();
               }
-
               if (includenum(str)) {
                 if (_isFirst) {
                   _focusNodes[i].unfocus();
@@ -188,7 +175,6 @@ class _OTPTextFieldState extends State<OTPTextField> {
         str.contains('8') ||
         str.contains('9');
   }
-
   // String swap(List<String> tries) {
   //   List last = List.generate(tries.last.length, (index) => tries.last[index]);
   //   List beforelast = List.generate(tries[tries.length - 2].length,
@@ -206,8 +192,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
   //   last.remove(element);
   // });
   // print("$tries and we remove ${last[0]}");
-
-  Fun(int i) {
+  void Fun(int i) {
     if (i != 0) {
       n4ta8al = _textControllers[i].text == '\t' &&
           includenum(_textControllers[i - 1].text);
