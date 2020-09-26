@@ -10,7 +10,7 @@ class OTPTextField extends StatefulWidget {
   final TextStyle style;
   final MainAxisAlignment textFieldAlignment;
   final bool obscureText;
-  final ValueChanged<String> onChanged;
+  // final ValueChanged<String> onChanged;
   final ValueChanged<String> onCompleted;
   OTPTextField(
       {Key key,
@@ -21,35 +21,47 @@ class OTPTextField extends StatefulWidget {
       this.style = const TextStyle(),
       this.textFieldAlignment = MainAxisAlignment.spaceBetween,
       this.obscureText = false,
-      this.onChanged,
+      // this.onChanged,
       this.onCompleted})
       : assert(length > 1);
 
   @override
   _OTPTextFieldState createState() => _OTPTextFieldState();
 }
+
 class _OTPTextFieldState extends State<OTPTextField> {
   List<FocusNode> _focusNodes;
   List<TextEditingController> _textControllers;
-List<bool> _isfirstList;
   List<Widget> _textFields;
-
+bool _naFirst;
   @override
   void initState() {
+    _naFirst=true;
     super.initState();
-    _isfirstList=List<bool>.filled(widget.length,true);
     _focusNodes = List<FocusNode>(widget.length);
     _textControllers = List<TextEditingController>(widget.length);
+
     _textFields = List.generate(widget.length, (int i) {
       return buildTextField(context, i);
     });
   }
-
+@override
+  void didChangeDependencies() {
+if(_naFirst){
+  _textControllers.forEach((element) {
+    element.text='\t';
+  });
+  _naFirst=false;
+}
+    super.didChangeDependencies();
+  }
   @override
   void dispose() {
     _textControllers
         .forEach((TextEditingController controller) => controller.dispose());
-    _focusNodes.forEach((element) {element.dispose(); });
+    _focusNodes.forEach((element) {
+      element.dispose();
+    });
     super.dispose();
   }
 
@@ -68,7 +80,7 @@ List<bool> _isfirstList;
   bool get check {
     bool oo = true;
     _textControllers.forEach((element) {
-      if (element.text.trim() == '') {
+      if (!includenum(element.text)) {
         oo = false;
       }
     });
@@ -83,18 +95,28 @@ List<bool> _isfirstList;
     return Container(
       width: widget.fieldWidth,
       child: TextField(
-        controller: _textControllers[i]..addListener(() {
-          _textControllers[i].selection = TextSelection.fromPosition(
-              TextPosition(offset: _textControllers[i].text.length));
-          try {
-            _textControllers[i].text = _textControllers[i].text[1];
-          }catch(e){}
+        controller: _textControllers[i]
+          ..addListener(() {
+            // if(includenum(_textControllers[i].text))
+            
+            if(includenum(_textControllers[i].text)){
+              _textControllers[i].selection = TextSelection.fromPosition(
+                  TextPosition(offset: _textControllers[i].text.length));
+            }
+            try {
+              _textControllers[i].text = _textControllers[i].text[1];
+            } catch (e) {}
+            if(_textControllers[i].text==''){
 
-        }),
+              _textControllers[i].text='\t';
+            }
+
+
+          }),
         keyboardType: widget.keyboardType,
         textAlign: TextAlign.center,
         dragStartBehavior: DragStartBehavior.down,
-        showCursor: true,
+        showCursor: true,maxLines: 1,
         style: widget.style,
         focusNode: _focusNodes[i],
         obscureText: widget.obscureText,
@@ -107,47 +129,48 @@ List<bool> _isfirstList;
           ),
         ),
         onChanged: (String str) {
-          if (str.isEmpty) {
-            print('na hna1');
+          if (!includenum(str)) {
             _focusNodes[i].unfocus();
             _focusNodes[i - 1].requestFocus();
           }
-          if (str.isNotEmpty) {
-            print('na hna2');
-
+          if (includenum(str)) {
             if (_isFirst) {
-              print('na hna3');
-
               _focusNodes[i].unfocus();
               _isFirst = false;
             } else {
-              print('na hna4');
               // _textControllers[i].text = str[1];
               // print(str);
               _focusNodes[i].unfocus();
             }
           }
           if (i + 1 != widget.length && str.isNotEmpty) {
-            print('na hna5');
             FocusScope.of(context).requestFocus(_focusNodes[i + 1]);
           }
-
-
-
-          String currentPin='';
+          String currentPin = '';
           _textControllers.forEach((TextEditingController value) {
             currentPin += value.text;
           });
-          if (_textControllers.last.text.trim()!=''&&check) {
+          if ( includenum(_textControllers.last.text) && check) {
             widget.onCompleted(currentPin);
           }
-          widget.onChanged(currentPin);
-
+          // widget.onChanged(currentPin);
         },
       ),
     );
   }
 
+  bool includenum(String str){
+
+    if(str.contains('0')||str.contains('1')||str.contains('2')||str.contains('3')||str.contains('4')||str.contains('5')||str.contains('6')
+        ||str.contains('7')||str.contains('8')||str.contains('9')){
+      
+      return true;
+    }else return false;
+    
+    
+  }
+  
+  
   // String swap(List<String> tries) {
   //   List last = List.generate(tries.last.length, (index) => tries.last[index]);
   //   List beforelast = List.generate(tries[tries.length - 2].length,
