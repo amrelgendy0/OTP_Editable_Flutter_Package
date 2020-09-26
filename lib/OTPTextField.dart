@@ -114,21 +114,29 @@ class _OTPTextFieldState extends State<OTPTextField> {
         ),
         onChanged: (String str) {
           if (str.isEmpty) {
-            if (i == 0) return;
+            // if (i == 0) return;
+            print('na hna1');
             _focusNodes[i].unfocus();
             _focusNodes[i - 1].requestFocus();
           }
           if (str.isNotEmpty) {
+            print('na hna2');
+
             if (_isFirst) {
+              print('na hna3');
+
               _focusNodes[i].unfocus();
               _isFirst = false;
             } else {
+              print('na hna4');
+
               // _textControllers[i].text = str[1];
               // print(str);
               // _focusNodes[i].unfocus();
             }
           }
           if (i + 1 != widget.length && str.isNotEmpty) {
+            print('na hna5');
             FocusScope.of(context).requestFocus(_focusNodes[i + 1]);
           }
 
