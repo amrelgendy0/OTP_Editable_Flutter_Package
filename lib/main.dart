@@ -34,11 +34,13 @@ class _OTPState extends State<OTP> {
             style: TextStyle(
                 color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
             width: 460,
-            onCompleted: (s) {
-              setState(() {
-                Otp = s;
-              });
-            },
+         onChanged: (uu){
+setState(() {
+
+  Otp=uu;
+
+});
+         },
             keyboardType: TextInputType.number,
           ),
           SizedBox(
@@ -50,7 +52,7 @@ class _OTPState extends State<OTP> {
                 print(Otp);
               },
               child: Text(
-                "Next",
+                "$Otp",
                 style: TextStyle(fontSize: 20),
               ),
             ),

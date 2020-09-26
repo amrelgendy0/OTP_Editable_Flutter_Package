@@ -85,6 +85,17 @@ class _OTPTextFieldState extends State<OTPTextField> {
         controller: _textControllers[i]..addListener(() {
           _textControllers[i].selection = TextSelection.fromPosition(
               TextPosition(offset: _textControllers[i].text.length));
+          try {
+            _textControllers[i].text = _textControllers[i].text[1];
+          }catch(e){}
+          String currentPin = "";
+          _textControllers.forEach((TextEditingController value) {
+            currentPin += value.text;
+          });
+          // if (check) {
+          //   widget.onCompleted(currentPin);
+          // }
+          widget.onChanged(currentPin);
         }),
         keyboardType: widget.keyboardType,
         textAlign: TextAlign.center,
@@ -112,21 +123,15 @@ class _OTPTextFieldState extends State<OTPTextField> {
               _focusNodes[i].unfocus();
               _isFirst = false;
             } else {
-              _textControllers[i].text = str[1];
-              _focusNodes[i].unfocus();
+              // _textControllers[i].text = str[1];
+              // print(str);
+              // _focusNodes[i].unfocus();
             }
           }
           if (i + 1 != widget.length && str.isNotEmpty) {
             FocusScope.of(context).requestFocus(_focusNodes[i + 1]);
           }
-          String currentPin = "";
-          _textControllers.forEach((var value) {
-            currentPin += value.text;
-          });
-          if (check) {
-            widget.onCompleted(currentPin);
-          }
-          widget.onChanged(currentPin);
+
         },
       ),
     );
