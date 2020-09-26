@@ -87,6 +87,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
     });
     return oo;
   }
+
   bool n4ta8al = false;
   Widget buildTextField(BuildContext context, int i) {
     bool _isFirst = true;
@@ -176,7 +177,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
   }
 
   bool includenum(String str) {
-    if (str.contains('0') ||
+    return str.contains('0') ||
         str.contains('1') ||
         str.contains('2') ||
         str.contains('3') ||
@@ -185,10 +186,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
         str.contains('6') ||
         str.contains('7') ||
         str.contains('8') ||
-        str.contains('9')) {
-      return true;
-    } else
-      return false;
+        str.contains('9');
   }
 
   // String swap(List<String> tries) {

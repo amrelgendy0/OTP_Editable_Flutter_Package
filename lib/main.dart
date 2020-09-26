@@ -37,7 +37,9 @@ class _OTPState extends State<OTP> {
                 color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
             width: 460,
             onCompleted: (String) {
-              print(String);
+             setState(() {
+               Otp = String;
+             });
             },
             keyboardType: TextInputType.number,
           ),
