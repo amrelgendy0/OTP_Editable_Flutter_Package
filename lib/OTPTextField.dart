@@ -31,12 +31,13 @@ class OTPTextField extends StatefulWidget {
 class _OTPTextFieldState extends State<OTPTextField> {
   List<FocusNode> _focusNodes;
   List<TextEditingController> _textControllers;
-
+List<bool> _isfirstList;
   List<Widget> _textFields;
 
   @override
   void initState() {
     super.initState();
+    _isfirstList=List<bool>.filled(widget.length,true);
     _focusNodes = List<FocusNode>(widget.length);
     _textControllers = List<TextEditingController>(widget.length);
     _textFields = List.generate(widget.length, (int i) {
@@ -88,14 +89,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
           try {
             _textControllers[i].text = _textControllers[i].text[1];
           }catch(e){}
-          String currentPin = "";
-          _textControllers.forEach((TextEditingController value) {
-            currentPin += value.text;
-          });
-          // if (check) {
-          //   widget.onCompleted(currentPin);
-          // }
-          widget.onChanged(currentPin);
+
         }),
         keyboardType: widget.keyboardType,
         textAlign: TextAlign.center,
@@ -114,7 +108,6 @@ class _OTPTextFieldState extends State<OTPTextField> {
         ),
         onChanged: (String str) {
           if (str.isEmpty) {
-            // if (i == 0) return;
             print('na hna1');
             _focusNodes[i].unfocus();
             _focusNodes[i - 1].requestFocus();
@@ -129,16 +122,26 @@ class _OTPTextFieldState extends State<OTPTextField> {
               _isFirst = false;
             } else {
               print('na hna4');
-
               // _textControllers[i].text = str[1];
               // print(str);
-              // _focusNodes[i].unfocus();
+              _focusNodes[i].unfocus();
             }
           }
           if (i + 1 != widget.length && str.isNotEmpty) {
             print('na hna5');
             FocusScope.of(context).requestFocus(_focusNodes[i + 1]);
           }
+
+
+
+          String currentPin='';
+          _textControllers.forEach((TextEditingController value) {
+            currentPin += value.text;
+          });
+          if (_textControllers.last.text.trim()!=''&&check) {
+            widget.onCompleted(currentPin);
+          }
+          widget.onChanged(currentPin);
 
         },
       ),
