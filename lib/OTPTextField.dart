@@ -7,6 +7,7 @@ class OTPTextField extends StatefulWidget {
   final double width;
   final double fieldWidth;
   final Future<String> smsResevierReady;
+  final String obscureChar;
   final TextInputType keyboardType;
   final TextStyle style;
   final MainAxisAlignment textFieldAlignment;
@@ -16,7 +17,7 @@ class OTPTextField extends StatefulWidget {
   OTPTextField(
       {Key key,
       this.smsResevierReady = null,
-      this.length = 2,
+      this.length = 2,this.obscureChar = "•",
       this.width = 6,
       this.fieldWidth = 60,
       this.keyboardType = TextInputType.number,
@@ -114,7 +115,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
           if (widget.obscureText) {
             setSsstate(() {
               if (includenum(_textControllers[i].text)) {
-                char = '•';
+                char = widget.obscureChar.trimRight().trimLeft()[0];
               } else
                 char = " ";
             });
