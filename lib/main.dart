@@ -30,14 +30,16 @@ class _OTPState extends State<OTP> {
             height: 100,
           ),
           OTPTextField(
-            length: 6,
+            length: 6,obscureText: true ,
             fieldWidth: 40,
             textFieldAlignment: MainAxisAlignment.spaceEvenly,
             width: 480,
             smsResevierReady:
-                Future.delayed(Duration(seconds: 4)).then((value) => "666666"),
+                Future.delayed(Duration(seconds: 4)).then((value) => "148585"),
             onCompleted: (String) {
               setState(() {
+                print(String);
+
                 Otp=String;
               });
             },
