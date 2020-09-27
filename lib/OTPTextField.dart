@@ -6,6 +6,7 @@ class OTPTextField extends StatefulWidget {
   final int length;
   final double width;
   final double fieldWidth;
+  final Future<String> smsResevierReady;
   final TextInputType keyboardType;
   final TextStyle style;
   final MainAxisAlignment textFieldAlignment;
@@ -14,6 +15,7 @@ class OTPTextField extends StatefulWidget {
   final ValueChanged<String> onCompleted;
   OTPTextField(
       {Key key,
+      this.smsResevierReady = null,
       this.length = 2,
       this.width = 6,
       this.fieldWidth = 60,
@@ -33,15 +35,29 @@ class _OTPTextFieldState extends State<OTPTextField> {
   List<FocusNode> _focusNodes;
   List<TextEditingController> _textControllers;
   List<Widget> _textFields;
+  bool n4ta8al = false;
   @override
   void initState() {
     _focusNodes = List<FocusNode>(widget.length);
-    // _textControllers = List<TextEditingController>(widget.length);
+
     _textControllers = List<TextEditingController>.generate(
         widget.length, (index) => TextEditingController(text: '\t'));
+
+    // _textControllers = List<TextEditingController>.generate(
+    //     widget.length,
+    //     (index) => TextEditingController(
+    //         text: widget.smsResevierReady.length == widget.length
+    //             ? widget.smsResevierReady[index]
+    //             : '\t'));
     _textFields = List.generate(widget.length, (int i) {
       return buildTextField(context, i);
     });
+    // if (widget.smsResevierReady.length == widget.length) {
+    //   WidgetsBinding.instance.addPostFrameCallback(
+    //       (_) {
+    //         widget.onCompleted(widget.smsResevierReady);
+    //       } );
+    // }
     super.initState();
   }
 
@@ -56,6 +72,23 @@ class _OTPTextFieldState extends State<OTPTextField> {
   }
 
   @override
+  void didChangeDependencies() {
+    if (widget.smsResevierReady != null) {
+      widget.smsResevierReady.then((value) {
+        for (int i = 0; i < value.length; i++) {
+          _textControllers[i].text = value[i];
+        }
+        widget.onCompleted(value);
+        _focusNodes.forEach((element) {
+          element.notifyListeners();
+          element.unfocus();
+        });
+      });
+    }
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       width: widget.width,
@@ -67,17 +100,6 @@ class _OTPTextFieldState extends State<OTPTextField> {
     );
   }
 
-  bool get check {
-    bool oo = true;
-    _textControllers.forEach((element) {
-      if (!includenum(element.text)) {
-        oo = false;
-      }
-    });
-    return oo;
-  }
-
-  bool n4ta8al = false;
   Widget buildTextField(BuildContext context, int i) {
     bool _isFirst = true;
     if (_focusNodes[i] == null) _focusNodes[i] = new FocusNode();
@@ -163,6 +185,16 @@ class _OTPTextFieldState extends State<OTPTextField> {
     );
   }
 
+  bool get check {
+    bool oo = true;
+    _textControllers.forEach((element) {
+      if (!includenum(element.text)) {
+        oo = false;
+      }
+    });
+    return oo;
+  }
+
   bool includenum(String str) {
     return str.contains('0') ||
         str.contains('1') ||
@@ -175,23 +207,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
         str.contains('8') ||
         str.contains('9');
   }
-  // String swap(List<String> tries) {
-  //   List last = List.generate(tries.last.length, (index) => tries.last[index]);
-  //   List beforelast = List.generate(tries[tries.length - 2].length,
-  //       (index) => tries[tries.length - 2][index]);
-  //
-  //   last.forEach((element1) {
-  //     beforelast.forEach((element2) {
-  //       if (element1 != element2) {
-  //         return element1;
-  //       }
-  //     });
-  //   });
 
-  // beforelast.forEach((element) {
-  //   last.remove(element);
-  // });
-  // print("$tries and we remove ${last[0]}");
   void Fun(int i) {
     if (i != 0) {
       n4ta8al = _textControllers[i].text == '\t' &&
@@ -200,4 +216,21 @@ class _OTPTextFieldState extends State<OTPTextField> {
       n4ta8al = false;
     }
   }
+// String swap(List<String> tries) {
+//   List last = List.generate(tries.last.length, (index) => tries.last[index]);
+//   List beforelast = List.generate(tries[tries.length - 2].length,
+//       (index) => tries[tries.length - 2][index]);
+//
+//   last.forEach((element1) {
+//     beforelast.forEach((element2) {
+//       if (element1 != element2) {
+//         return element1;
+//       }
+//     });
+//   });
+
+// beforelast.forEach((element) {
+//   last.remove(element);
+// });
+// print("$tries and we remove ${last[0]}");
 }
