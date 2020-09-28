@@ -29,15 +29,8 @@ class _OTPState extends State<OTP> {
             height: 100,
           ),
           OTPTextField(
-            length: 6,
-            obscureText: true,showCursor: true,
-            style: TextStyle(fontSize: 70),
-            fieldWidth: 40,
-            textFieldAlignment: MainAxisAlignment.spaceEvenly,
-            width: 480,
-            smsResevierStreamReady: Future.delayed(Duration(seconds: 2)).then((value) => "234578").asStream(),
-            onCompleted: (String) {
-          print(String);
+            onCompleted: (a) {
+              print('$a');
             },
           ),
           SizedBox(
@@ -45,9 +38,7 @@ class _OTPState extends State<OTP> {
           ),
           FlatButton(
             color: Colors.blue,
-            onPressed: () {
-
-            },
+            onPressed: () {},
             child: Text(
               "dd",
               style: TextStyle(fontSize: 20),
