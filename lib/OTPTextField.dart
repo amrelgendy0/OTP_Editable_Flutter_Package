@@ -6,19 +6,25 @@ class OTPTextField extends StatefulWidget {
   final int length;
   final double width;
   final double fieldWidth;
+  final InputDecoration decoration;
   final Future<String> smsResevierFutureReady;
-  final Stream<String>  smsResevierStreamReady;
+  final Stream<String> smsResevierStreamReady;
   final String obscureChar;
   final TextInputType keyboardType;
   final TextStyle style;
+  final bool showCursor;
   final MainAxisAlignment textFieldAlignment;
   final bool obscureText;
   // final ValueChanged<String> onChanged;
   final ValueChanged<String> onCompleted;
   OTPTextField(
-      {Key key,this.smsResevierFutureReady=null,
+      {Key key,
+      this.smsResevierFutureReady = null,
+      this.showCursor = true,
+      this.decoration,
       this.smsResevierStreamReady = null,
-      this.length = 2,this.obscureChar = "•",
+      this.length = 2,
+      this.obscureChar = "•",
       this.width = 6,
       this.fieldWidth = 60,
       this.keyboardType = TextInputType.number,
@@ -63,6 +69,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
   @override
   void dispose() {
+    //dispose textcontrollers and focusnodes
     _textControllers
         .forEach((TextEditingController controller) => controller.dispose());
     _focusNodes.forEach((element) {
@@ -73,6 +80,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
   @override
   void didChangeDependencies() {
+    //if stream not equal to null fill the text fields with its value
     if (widget.smsResevierStreamReady != null) {
       widget.smsResevierStreamReady.listen((value) {
         for (int i = 0; i < value.length; i++) {
@@ -85,6 +93,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
         });
       });
     }
+    //if future not equal to null fill the text fields with its value
     if (widget.smsResevierFutureReady != null) {
       widget.smsResevierFutureReady.then((value) {
         for (int i = 0; i < value.length; i++) {
@@ -149,20 +158,21 @@ class _OTPTextFieldState extends State<OTPTextField> {
             keyboardType: widget.keyboardType,
             textAlign: TextAlign.center,
             dragStartBehavior: DragStartBehavior.down,
-            showCursor: true,
+            showCursor: widget.showCursor,
             maxLines: 1,
             obscuringCharacter: char,
             style: widget.style,
             focusNode: _focusNodes[i],
             obscureText: widget.obscureText,
-            decoration: InputDecoration(
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.green),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.red),
-              ),
-            ),
+            decoration: widget.decoration ??
+                const InputDecoration(
+                  enabledBorder:const UnderlineInputBorder(
+                    borderSide:const BorderSide(color: Colors.green),
+                  ),
+                  focusedBorder:const UnderlineInputBorder(
+                    borderSide:const BorderSide(color: Colors.red),
+                  ),
+                ),
             onChanged: (String str) {
               if (!includenum(str)) {
                 if (n4ta8al) {
@@ -182,11 +192,12 @@ class _OTPTextFieldState extends State<OTPTextField> {
               if (i + 1 != widget.length && str.isNotEmpty) {
                 FocusScope.of(context).requestFocus(_focusNodes[i + 1]);
               }
-              String currentPin = '';
-              _textControllers.forEach((TextEditingController value) {
-                currentPin += value.text;
-              });
-              if (includenum(_textControllers.last.text) && check) {
+
+              if (checkIfAllFilledWithNumbers) {
+                String currentPin = '';
+                _textControllers.forEach((TextEditingController value) {
+                  currentPin += value.text;
+                });
                 widget.onCompleted(currentPin);
               }
               // widget.onChanged(currentPin);
@@ -197,7 +208,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
     );
   }
 
-  bool get check {
+  bool get checkIfAllFilledWithNumbers {
     bool oo = true;
     _textControllers.forEach((element) {
       if (!includenum(element.text)) {
