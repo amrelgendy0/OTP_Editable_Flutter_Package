@@ -166,11 +166,11 @@ class _OTPTextFieldState extends State<OTPTextField> {
             obscureText: widget.obscureText,
             decoration: widget.decoration ??
                 const InputDecoration(
-                  enabledBorder:const UnderlineInputBorder(
-                    borderSide:const BorderSide(color: Colors.green),
+                  enabledBorder: const UnderlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.green),
                   ),
-                  focusedBorder:const UnderlineInputBorder(
-                    borderSide:const BorderSide(color: Colors.red),
+                  focusedBorder: const UnderlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.red),
                   ),
                 ),
             onChanged: (String str) {
