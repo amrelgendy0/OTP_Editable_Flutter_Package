@@ -20,7 +20,6 @@ class OTP extends StatefulWidget {
 }
 
 class _OTPState extends State<OTP> {
-  String Otp = '';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,33 +29,32 @@ class _OTPState extends State<OTP> {
             height: 100,
           ),
           OTPTextField(
-            length: 6,obscureText: true ,
+            length: 6,
+            obscureText: false,
+            style: TextStyle(fontSize: 70),
             fieldWidth: 40,
             textFieldAlignment: MainAxisAlignment.spaceEvenly,
             width: 480,
-            smsResevierReady:
-                Future.delayed(Duration(seconds: 4)).then((value) => "148585"),
+            smsResevierStreamReady: Future.delayed(Duration(seconds: 2)).then((value) => "234578").asStream(),
             onCompleted: (String) {
               setState(() {
                 print(String);
-
-                Otp=String;
               });
             },
           ),
           SizedBox(
             height: 40,
           ),
-          if (Otp.trim() != '')
-            FlatButton(
-              onPressed: () {
-                print(Otp);
-              },
-              child: Text(
-                "$Otp",
-                style: TextStyle(fontSize: 20),
-              ),
+          FlatButton(
+            color: Colors.blue,
+            onPressed: () {
+
+            },
+            child: Text(
+              "dd",
+              style: TextStyle(fontSize: 20),
             ),
+          ),
         ],
       ),
     );
