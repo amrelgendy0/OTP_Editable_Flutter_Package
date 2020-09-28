@@ -6,7 +6,8 @@ class OTPTextField extends StatefulWidget {
   final int length;
   final double width;
   final double fieldWidth;
-  final Future<String> smsResevierReady;
+  final Future<String> smsResevierFutureReady;
+  final Stream<String>  smsResevierStreamReady;
   final String obscureChar;
   final TextInputType keyboardType;
   final TextStyle style;
@@ -15,8 +16,8 @@ class OTPTextField extends StatefulWidget {
   // final ValueChanged<String> onChanged;
   final ValueChanged<String> onCompleted;
   OTPTextField(
-      {Key key,
-      this.smsResevierReady = null,
+      {Key key,this.smsResevierFutureReady=null,
+      this.smsResevierStreamReady = null,
       this.length = 2,this.obscureChar = "•",
       this.width = 6,
       this.fieldWidth = 60,
@@ -40,10 +41,8 @@ class _OTPTextFieldState extends State<OTPTextField> {
   @override
   void initState() {
     _focusNodes = List<FocusNode>(widget.length);
-
     _textControllers = List<TextEditingController>.generate(
         widget.length, (index) => TextEditingController(text: '\t'));
-
     // _textControllers = List<TextEditingController>.generate(
     //     widget.length,
     //     (index) => TextEditingController(
@@ -74,8 +73,20 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
   @override
   void didChangeDependencies() {
-    if (widget.smsResevierReady != null) {
-      widget.smsResevierReady.then((value) {
+    if (widget.smsResevierStreamReady != null) {
+      widget.smsResevierStreamReady.listen((value) {
+        for (int i = 0; i < value.length; i++) {
+          _textControllers[i].text = value[i];
+        }
+        widget.onCompleted(value);
+        _focusNodes.forEach((element) {
+          element.notifyListeners();
+          element.unfocus();
+        });
+      });
+    }
+    if (widget.smsResevierFutureReady != null) {
+      widget.smsResevierFutureReady.then((value) {
         for (int i = 0; i < value.length; i++) {
           _textControllers[i].text = value[i];
         }
