@@ -7,31 +7,34 @@ class OTPTextField extends StatefulWidget {
   final double width;
   final double fieldWidth;
   final InputDecoration decoration;
-  final Future<String> smsResevierFutureReady;
-  final Stream<String> smsResevierStreamReady;
+  final Future<String> smsReceiverFutureReady;
+  final Stream<String> smsReceiverStreamReady;
   final String obscureChar;
-  final TextInputType keyboardType;
   final TextStyle style;
   final bool showCursor;
   final MainAxisAlignment textFieldAlignment;
   final bool obscureText;
-  // final ValueChanged<String> onChanged;
   final ValueChanged<String> onCompleted;
   OTPTextField(
       {Key key,
-      this.smsResevierFutureReady = null,
+      this.smsReceiverFutureReady = null,
       this.showCursor = true,
-      this.decoration,
-      this.smsResevierStreamReady = null,
-      this.length = 2,
+      this.decoration = const InputDecoration(
+        enabledBorder: const UnderlineInputBorder(
+          borderSide: const BorderSide(color: Colors.green),
+        ),
+        focusedBorder: const UnderlineInputBorder(
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+      ),
+      this.smsReceiverStreamReady = null,
+      this.length = 5,
       this.obscureChar = "•",
-      this.width = 6,
-      this.fieldWidth = 60,
-      this.keyboardType = TextInputType.number,
-      this.style = const TextStyle(),
-      this.textFieldAlignment = MainAxisAlignment.spaceBetween,
+      this.width = 700,
+      this.fieldWidth = 40,
+      this.style = const TextStyle(fontSize: 30),
+      this.textFieldAlignment = MainAxisAlignment.spaceEvenly,
       this.obscureText = false,
-      // this.onChanged,
       this.onCompleted})
       : assert(length > 1);
 
@@ -81,8 +84,8 @@ class _OTPTextFieldState extends State<OTPTextField> {
   @override
   void didChangeDependencies() {
     //if stream not equal to null fill the text fields with its value
-    if (widget.smsResevierStreamReady != null) {
-      widget.smsResevierStreamReady.listen((value) {
+    if (widget.smsReceiverStreamReady != null) {
+      widget.smsReceiverStreamReady.listen((value) {
         for (int i = 0; i < value.length; i++) {
           _textControllers[i].text = value[i];
         }
@@ -94,8 +97,8 @@ class _OTPTextFieldState extends State<OTPTextField> {
       });
     }
     //if future not equal to null fill the text fields with its value
-    if (widget.smsResevierFutureReady != null) {
-      widget.smsResevierFutureReady.then((value) {
+    if (widget.smsReceiverFutureReady != null) {
+      widget.smsReceiverFutureReady.then((value) {
         for (int i = 0; i < value.length; i++) {
           _textControllers[i].text = value[i];
         }
@@ -148,14 +151,14 @@ class _OTPTextFieldState extends State<OTPTextField> {
               ..addListener(() {
                 _textControllers[i].selection = TextSelection.fromPosition(
                     TextPosition(offset: _textControllers[i].text.length));
-                try {
+                if (_textControllers[i].text.length > 1) {
                   _textControllers[i].text = _textControllers[i].text[1];
-                } catch (e) {}
+                }
                 if (_textControllers[i].text == '') {
                   _textControllers[i].text = '\t';
                 }
               }),
-            keyboardType: widget.keyboardType,
+            keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
             dragStartBehavior: DragStartBehavior.down,
             showCursor: widget.showCursor,
@@ -164,15 +167,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
             style: widget.style,
             focusNode: _focusNodes[i],
             obscureText: widget.obscureText,
-            decoration: widget.decoration ??
-                const InputDecoration(
-                  enabledBorder: const UnderlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.green),
-                  ),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.red),
-                  ),
-                ),
+            decoration: widget.decoration,
             onChanged: (String str) {
               if (!includenum(str)) {
                 if (n4ta8al) {
