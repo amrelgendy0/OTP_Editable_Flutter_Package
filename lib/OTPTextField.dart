@@ -86,6 +86,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
     //if stream not equal to null fill the text fields with its value
     if (widget.smsReceiverStreamReady != null) {
       widget.smsReceiverStreamReady.listen((value) {
+        _textControllers.forEach((element) {element.clear(); });
         for (int i = 0; i < value.length; i++) {
           _textControllers[i].text = value[i];
         }
