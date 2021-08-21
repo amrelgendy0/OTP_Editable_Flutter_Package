@@ -7,16 +7,16 @@ class OTPTextField extends StatefulWidget {
   final double width;
   final double fieldWidth;
   final InputDecoration decoration;
-  final Future<String> smsReceiverFutureReady;
-  final Stream<String> smsReceiverStreamReady;
+  final Future<String>? smsReceiverFutureReady;
+  final Stream<String>? smsReceiverStreamReady;
   final String obscureChar;
   final TextStyle style;
   final bool showCursor;
   final MainAxisAlignment textFieldAlignment;
   final bool obscureText;
-  final ValueChanged<String> onCompleted;
+  final ValueChanged<String>? onCompleted;
   OTPTextField(
-      {Key key,
+      {Key? key,
       this.smsReceiverFutureReady = null,
       this.showCursor = true,
       this.decoration = const InputDecoration(
@@ -43,13 +43,13 @@ class OTPTextField extends StatefulWidget {
 }
 
 class _OTPTextFieldState extends State<OTPTextField> {
-  List<FocusNode> _focusNodes;
-  List<TextEditingController> _textControllers;
-  List<Widget> _textFields;
+  late List<FocusNode?> _focusNodes;
+  late List<TextEditingController> _textControllers;
+  late List<Widget> _textFields;
   bool n4ta8al = false;
   @override
   void initState() {
-    _focusNodes = List<FocusNode>(widget.length);
+    _focusNodes = List.generate(widget.length, (index) => null);
     _textControllers = List<TextEditingController>.generate(
         widget.length, (index) => TextEditingController(text: '\t'));
     // _textControllers = List<TextEditingController>.generate(
@@ -76,7 +76,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
     _textControllers
         .forEach((TextEditingController controller) => controller.dispose());
     _focusNodes.forEach((element) {
-      element.dispose();
+      element!.dispose();
     });
     super.dispose();
   }
@@ -85,27 +85,29 @@ class _OTPTextFieldState extends State<OTPTextField> {
   void didChangeDependencies() {
     //if stream not equal to null fill the text fields with its value
     if (widget.smsReceiverStreamReady != null) {
-      widget.smsReceiverStreamReady.listen((value) {
-        _textControllers.forEach((element) {element.clear(); });
+      widget.smsReceiverStreamReady!.listen((value) {
+        _textControllers.forEach((element) {
+          element.clear();
+        });
         for (int i = 0; i < value.length; i++) {
           _textControllers[i].text = value[i];
         }
-        widget.onCompleted(value);
+        widget.onCompleted!(value);
         _focusNodes.forEach((element) {
-          element.notifyListeners();
+          element!.notifyListeners();
           element.unfocus();
         });
       });
     }
     //if future not equal to null fill the text fields with its value
     if (widget.smsReceiverFutureReady != null) {
-      widget.smsReceiverFutureReady.then((value) {
+      widget.smsReceiverFutureReady!.then((value) {
         for (int i = 0; i < value.length; i++) {
           _textControllers[i].text = value[i];
         }
-        widget.onCompleted(value);
+        widget.onCompleted!(value);
         _focusNodes.forEach((element) {
-          element.notifyListeners();
+          element!.notifyListeners();
           element.unfocus();
         });
       });
@@ -134,7 +136,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
     return StatefulBuilder(
       builder:
           (BuildContext context, void Function(void Function()) setSsstate) {
-        _focusNodes[i].addListener(() {
+        _focusNodes[i]!.addListener(() {
           Fun(i);
           if (widget.obscureText) {
             setSsstate(() {
@@ -174,15 +176,15 @@ class _OTPTextFieldState extends State<OTPTextField> {
                 if (n4ta8al) {
                   _textControllers[i - 1].text = '\t';
                 }
-                _focusNodes[i].unfocus();
-                _focusNodes[i - 1].requestFocus();
+                _focusNodes[i]!.unfocus();
+                _focusNodes[i - 1]!.requestFocus();
               }
               if (includenum(str)) {
                 if (_isFirst) {
-                  _focusNodes[i].unfocus();
+                  _focusNodes[i]!.unfocus();
                   _isFirst = false;
                 } else {
-                  _focusNodes[i].unfocus();
+                  _focusNodes[i]!.unfocus();
                 }
               }
               if (i + 1 != widget.length && str.isNotEmpty) {
@@ -194,7 +196,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
                 _textControllers.forEach((TextEditingController value) {
                   currentPin += value.text;
                 });
-                widget.onCompleted(currentPin);
+                widget.onCompleted!(currentPin);
               }
               // widget.onChanged(currentPin);
             },
